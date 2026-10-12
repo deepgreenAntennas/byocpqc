@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BYOC PQC DevSecOps Orchestrator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #0b0f14;
+        color: #e6edf3;
+    }
+
+    header {
+        background: #111827;
+        padding: 15px 25px;
+        font-size: 20px;
+        font-weight: bold;
+        border-bottom: 1px solid #1f2937;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        height: 100vh;
+    }
+
+    .sidebar {
+        background: #0f172a;
+        padding: 20px;
+        border-right: 1px solid #1f2937;
+    }
+
+    .sidebar h3 {
+        color: #38bdf8;
+    }
+
+    .sidebar button {
+        width: 100%;
+        margin: 10px 0;
+        padding: 10px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+
+    .main {
+        padding: 20px;
+    }
+
+    .card {
+        background: #111827;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        border: 1px solid #1f2937;
+    }
+
+    .status {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+    }
+
+    .secure { background: #16a34a; }
+    .warning { background: #f59e0b; }
+    .danger { background: #dc2626; }
+
+    .pipeline {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .stage {
+        flex: 1;
+        padding: 10px;
+        background: #1f2937;
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    .active {
+        background: #2563eb;
+    }
+
+    .log {
+        background: black;
+        padding: 10px;
+        height: 150px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 12px;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+🚀 BYOC DevSecOps + PQC Orchestration Layer
+</header>
+
+<div class="container">
+
+    <div class="sidebar">
+        <h3>Cloud Providers</h3>
+        <button onclick="connectCloud('AWS')">Connect AWS</button>
+        <button onclick="connectCloud('GCP')">Connect GCP</button>
+        <button onclick="connectCloud('Azure')">Connect Azure</button>
+
+        <h3>PQC Settings</h3>
+        <button onclick="enablePQC()">Enable PQC (Kyber)</button>
+        <button onclick="enableSignature()">Enable PQC Signatures</button>
+
+        <h3>Pipeline</h3>
+        <button onclick="runPipeline()">Run Secure Pipeline</button>
+    </div>
+
+    <div class="main">
+
+        <div class="card">
+            <h2>Environment Status</h2>
+            <div class="status">
+                <span>Cloud:</span>
+                <span id="cloudStatus" class="badge warning">Not Connected</span>
+            </div>
+            <div class="status">
+                <span>Encryption:</span>
+                <span id="cryptoStatus" class="badge danger">Classical (RSA/ECC)</span>
+            </div>
+            <div class="status">
+                <span>Compliance:</span>
+                <span id="complianceStatus" class="badge warning">Pending</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>DevSecOps Pipeline</h2>
+            <div class="pipeline">
+                <div class="stage" id="stage1">Build</div>
+                <div class="stage" id="stage2">Scan</div>
+                <div class="stage" id="stage3">Sign</div>
+                <div class="stage" id="stage4">Deploy</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Security Log</h2>
+            <div class="log" id="log"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function log(msg) {
+    const logBox = document.getElementById("log");
+    logBox.innerHTML += "> " + msg + "<br>";
+    logBox.scrollTop = logBox.scrollHeight;
+}
+
+function connectCloud(provider) {
+    document.getElementById("cloudStatus").innerText = provider + " Connected";
+    document.getElementById("cloudStatus").className = "badge secure";
+    log("Connected to " + provider + " (BYOC mode)");
+}
+
+function enablePQC() {
+    document.getElementById("cryptoStatus").innerText = "PQC Enabled (Kyber)";
+    document.getElementById("cryptoStatus").className = "badge secure";
+    log("Switched encryption to Post-Quantum (CRYSTALS-Kyber)");
+}
+
+function enableSignature() {
+    log("Enabled PQC Signatures (Dilithium)");
+}
+
+function runPipeline() {
+    const stages = ["stage1", "stage2", "stage3", "stage4"];
+
+    let i = 0;
+
+    function nextStage() {
+        if (i > 0) {
+            document.getElementById(stages[i-1]).classList.remove("active");
+        }
+
+        if (i < stages.length) {
+            document.getElementById(stages[i]).classList.add("active");
+
+            log("Running " + document.getElementById(stages[i]).innerText);
+
+            if (stages[i] === "stage2") {
+                log("Security scan: No vulnerabilities found");
+            }
+
+            if (stages[i] === "stage3") {
+                log("Artifact signed with PQC signature");
+            }
+
+            i++;
+            setTimeout(nextStage, 1000);
+        } else {
+            document.getElementById("complianceStatus").innerText = "Compliant";
+            document.getElementById("complianceStatus").className = "badge secure";
+            log("Deployment complete — PQC secured environment");
+        }
+    }
+
+    nextStage();
+}
+</script>
+
+</body>
+</html>
